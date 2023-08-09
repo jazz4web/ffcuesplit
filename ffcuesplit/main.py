@@ -3,6 +3,7 @@ import pprint
 import os
 import sys
 
+from .checker import check_couple, check_cue
 from .parser import extract_metadata, make_couple
 from .system import check_dep
 
@@ -58,7 +59,7 @@ def show_error(msg, code=1):
 
 
 def start_the_process(arguments):
-#    print(arguments)
+#   print(arguments)
     meta = dict()
     make_couple(arguments.cue_file, meta)
     cue, media = meta.get('cue'), meta.get('media')
@@ -68,4 +69,6 @@ def start_the_process(arguments):
         if not check_dep('flac'):
             raise OSError('flac is not installed')
     extract_metadata(cue, meta)
-    pprint.pprint(meta)
+    check_cue(meta)
+    check_couple(meta, arguments.gaps)
+#   pprint.pprint(meta)
