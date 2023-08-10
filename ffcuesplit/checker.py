@@ -4,13 +4,11 @@ import shlex
 from subprocess import Popen, PIPE
 
 
-def check_index(timestamp, check_only=False):
+def check_index(timestamp):
     if timestamp:
         mm, ss, ff = re.split(r'[:.]', timestamp)
         if int(ss) > 59 or int(ff) > 74:
             raise ValueError('invalid timestamp')
-        if not check_only:
-            return mm, ss, ff
 
 
 def check_cue(cue):
@@ -19,13 +17,9 @@ def check_cue(cue):
                bool(cue.get('tracks'))]
     if not all(summary):
         raise ValueError('this cuesheet is not valid')
-    if cue['tracks'][0].get('index0') == '00:00:00':
-        cue['tracks'][0]['index0'] = None
-    if cue['tracks'][0].get('index1') == '00:00:00':
-        cue['tracks'][0]['index1'] = None
     for track in cue.get('tracks', list()):
-        check_index(track['index0'], check_only=True)
-        check_index(track['index1'], check_only=True)
+        check_index(track['index0'])
+        check_index(track['index1'])
         num = track.get('num')
         if track.get('title') is None:
             raise ValueError(f'bad title for track {num}')
@@ -52,9 +46,9 @@ def check_media(media):
     with Popen(cmd, stderr=PIPE) as ffmpeg:
         res = ffmpeg.communicate()[1]
     data = grep(
-        res.decode('utf-8').split('\n'), 'Duration').strip().split(' ')[1]
+        res.split(b'\n'), b'Duration').decode('utf-8').strip().split(' ')[1]
     data2 = grep(
-        res.decode('utf-8').split('\n'), 'Stream')
+        res.split(b'\n'), b'Stream').decode('utf-8')
     sr = int(data2.split(',')[1].strip().split(' ')[0])
     b = int(get_num(data2.split(',')[-1].strip().strip('s')))
     return ff_to_seconds(data.strip(',')), sr, b
@@ -74,12 +68,56 @@ def grep(data, s):
             return each
 
 
-def check_couple(cue, gaps):
+def check_couple(cue):
     length, sr, b = check_media(cue["media"])
     if sr != 44100 or b != 16:
         raise ValueError('the media file is not CDDA')
     last = cue_to_seconds(cue['tracks'][-1]['index1'])
     if length <= last:
         raise ValueError('the media file is too short for this cue')
+
+
+def get_points(cue, gaps):
     for i in range(len(cue['tracks'])):
-        print(cue['tracks'][i])
+        cur = cue['tracks'][i]
+        if i < len(cue['tracks']) - 1:
+            nex = cue['tracks'][i+1]
+        if gaps == 'split':
+            cur['start'] = cue_to_seconds(cur['index1']) + 0.01
+            if i < len(cue['tracks']) - 1:
+                if nex['index0']:
+                    cur['end'] = cue_to_seconds(nex['index0'])
+                else:
+                    cur['end'] = cue_to_seconds(nex['index1'])
+            else:
+                cur['end'] = 0.0
+        elif gaps == 'append':
+            if i == 0:
+                if cur['index0']:
+                    cur['start'] = cue_to_seconds(cur['index0'])
+                else:
+                    cur['start'] = cue_to_seconds(cur['index1'])
+            else:
+                cur['start'] = cue_to_seconds(cur['index1']) + 0.01
+            if i < len(cue['tracks']) - 1:
+                cur['end'] = cue_to_seconds(nex['index1'])
+            else:
+                cur['end'] = 0.0
+        elif gaps == 'prepend':
+            if i == 0:
+                if cur['index0']:
+                    cur['start'] = cue_to_seconds(cur['index0'])
+                else:
+                    cur['start'] = cue_to_seconds(cur['index1'])
+            else:
+                if cur['index0']:
+                    cur['start'] = cue_to_seconds(cur['index0']) + 0.01
+                else:
+                    cur['start'] = cue_to_seconds(cur['index1']) + 0.01
+            if i < len(cue['tracks']) - 1:
+                if nex['index0']:
+                    cur['end'] = cue_to_seconds(nex['index0'])
+                else:
+                    cur['end'] = cue_to_seconds(nex['index1'])
+            else:
+                cur['end'] = 0.0

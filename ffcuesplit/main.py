@@ -3,7 +3,7 @@ import pprint
 import os
 import sys
 
-from .checker import check_couple, check_cue
+from .checker import check_couple, check_cue, get_points
 from .parser import extract_metadata, make_couple
 from .system import check_dep
 
@@ -70,5 +70,6 @@ def start_the_process(arguments):
             raise OSError('flac is not installed')
     extract_metadata(cue, meta)
     check_cue(meta)
-    check_couple(meta, arguments.gaps)
-#   pprint.pprint(meta)
+    check_couple(meta)
+    get_points(meta, arguments.gaps)
+    pprint.pprint(meta)
