@@ -83,41 +83,43 @@ def get_points(cue, gaps):
         if i < len(cue['tracks']) - 1:
             nex = cue['tracks'][i+1]
         if gaps == 'split':
-            cur['start'] = cue_to_seconds(cur['index1']) + 0.01
+            cur['start'] = round(cue_to_seconds(cur['index1']) + 0.01, 2)
             if i < len(cue['tracks']) - 1:
                 if nex['index0']:
-                    cur['end'] = cue_to_seconds(nex['index0'])
+                    cur['end'] = round(cue_to_seconds(nex['index0']), 2)
                 else:
-                    cur['end'] = cue_to_seconds(nex['index1'])
+                    cur['end'] = round(cue_to_seconds(nex['index1']), 2)
             else:
                 cur['end'] = 0.0
         elif gaps == 'append':
             if i == 0:
                 if cur['index0']:
-                    cur['start'] = cue_to_seconds(cur['index0'])
+                    cur['start'] = round(cue_to_seconds(cur['index0']), 2)
                 else:
-                    cur['start'] = cue_to_seconds(cur['index1'])
+                    cur['start'] = round(cue_to_seconds(cur['index1']), 2)
             else:
-                cur['start'] = cue_to_seconds(cur['index1']) + 0.01
+                cur['start'] = round(cue_to_seconds(cur['index1']) + 0.01, 2)
             if i < len(cue['tracks']) - 1:
-                cur['end'] = cue_to_seconds(nex['index1'])
+                cur['end'] = round(cue_to_seconds(nex['index1']), 2)
             else:
                 cur['end'] = 0.0
         elif gaps == 'prepend':
             if i == 0:
                 if cur['index0']:
-                    cur['start'] = cue_to_seconds(cur['index0'])
+                    cur['start'] = round(cue_to_seconds(cur['index0']), 2)
                 else:
-                    cur['start'] = cue_to_seconds(cur['index1'])
+                    cur['start'] = round(cue_to_seconds(cur['index1']), 2)
             else:
                 if cur['index0']:
-                    cur['start'] = cue_to_seconds(cur['index0']) + 0.01
+                    cur['start'] = round(
+                        cue_to_seconds(cur['index0']) + 0.01, 2)
                 else:
-                    cur['start'] = cue_to_seconds(cur['index1']) + 0.01
+                    cur['start'] = round(
+                        cue_to_seconds(cur['index1']) + 0.01, 2)
             if i < len(cue['tracks']) - 1:
                 if nex['index0']:
-                    cur['end'] = cue_to_seconds(nex['index0'])
+                    cur['end'] = round(cue_to_seconds(nex['index0']), 2)
                 else:
-                    cur['end'] = cue_to_seconds(nex['index1'])
+                    cur['end'] = round(cue_to_seconds(nex['index1']), 2)
             else:
                 cur['end'] = 0.0
