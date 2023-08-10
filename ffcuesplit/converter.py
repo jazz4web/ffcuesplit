@@ -4,7 +4,7 @@ from subprocess import Popen, PIPE
 
 
 def convert(track, cue):
-    print(f'track{track["num"]}')
+    print(f'{track["num"]} - {track["performer"]} - {track["title"]}')
     if track['start']:
         ss = f' -ss {track["start"]}'
     else:
@@ -13,7 +13,7 @@ def convert(track, cue):
         tt = f' -to {track["end"]}'
     else:
         tt = ''
-    cmd = 'ffmpeg{0}{1} -i {2} -v quiet -stats -codec:a pcm_s16le {3}'.format(
-            ss, tt, cue['media'], 'track' + track['num'] + '.wav')
+    cmd = 'ffmpeg{0}{1} -i {2} -v quiet -stats -vn -codec:a pcm_s16le -map_metadata -1 {3}'.format(
+            ss, tt, cue['media'], track['num'] + '.wav')
     with Popen(shlex.split(cmd)) as ffmpeg:
         res = ffmpeg.communicate()
