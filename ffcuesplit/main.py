@@ -74,5 +74,5 @@ def start_the_process(arguments):
     check_couple(meta)
     get_points(meta, arguments.gaps)
     for each in meta['tracks']:
-        convert(each, meta)
+        convert(each, meta, arguments)
 #   pprint.pprint(meta)
