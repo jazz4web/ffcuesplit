@@ -29,12 +29,6 @@ def check_cue(cue):
     cue['commentary'] = f'{cue.get("comment")}{slash}{cue.get("disc ID")}'
 
 
-def add_f(s):
-    mm, ss, ff = re.split(r'[:.]', s)
-    ff = int(ff) + 1
-    return f'{mm}:{ss}:{ff}'
-
-
 def cue_to_seconds(s):
     mm, ss, ff = re.split(r'[:.]', s)
     nn = int(ff) / 75
@@ -89,10 +83,7 @@ def get_points(cue, gaps):
         if i < len(cue['tracks']) - 1:
             nex = cue['tracks'][i+1]
         if gaps == 'split':
-            if i == 0:
-                cur['start'] = cue_to_seconds(cur['index1'])
-            else:
-                cur['start'] = cue_to_seconds(add_f(cur['index1']))
+            cur['start'] = cue_to_seconds(cur['index1'])
             if i < len(cue['tracks']) - 1:
                 if nex['index0']:
                     cur['end'] = cue_to_seconds(nex['index0'])
@@ -107,22 +98,16 @@ def get_points(cue, gaps):
                 else:
                     cur['start'] = cue_to_seconds(cur['index1'])
             else:
-                cur['start'] = cue_to_seconds(add_f(cur['index1']))
+                cur['start'] = cue_to_seconds(cur['index1'])
             if i < len(cue['tracks']) - 1:
                 cur['end'] = cue_to_seconds(nex['index1'])
             else:
                 cur['end'] = 0.0
         elif gaps == 'prepend':
-            if i == 0:
-                if cur['index0']:
-                    cur['start'] = cue_to_seconds(cur['index0'])
-                else:
-                    cur['start'] = cue_to_seconds(cur['index1'])
+            if cur['index0']:
+                cur['start'] = cue_to_seconds(cur['index0'])
             else:
-                if cur['index0']:
-                    cur['start'] = cue_to_seconds(add_f(cur['index0']))
-                else:
-                    cur['start'] = cue_to_seconds(add_f(cur['index1']))
+                cur['start'] = cue_to_seconds(cur['index1'])
             if i < len(cue['tracks']) - 1:
                 if nex['index0']:
                     cur['end'] = cue_to_seconds(nex['index0'])
