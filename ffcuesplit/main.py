@@ -69,6 +69,9 @@ def start_the_process(arguments):
     if arguments.media_type == 'flac' or os.path.splitext(media)[1] == '.flac':
         if not check_dep('flac'):
             raise OSError('flac is not installed')
+    if arguments.media_type == 'opus':
+        if not check_dep('opusenc'):
+            raise OSError('opus-tools is not installed')
     extract_metadata(cue, meta)
     check_cue(meta)
     check_couple(meta)
