@@ -42,7 +42,7 @@ def ff_to_seconds(s):
 
 
 def check_media(media):
-    cmd = shlex.split(f'ffmpeg -i {media}')
+    cmd = shlex.split(f'ffmpeg -i "{media}"')
     with Popen(cmd, stderr=PIPE) as ffmpeg:
         res = ffmpeg.communicate()[1]
     data = grep(

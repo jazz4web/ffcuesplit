@@ -60,22 +60,26 @@ def show_error(msg, code=1):
 
 
 def start_the_process(arguments):
-#   print(arguments)
     meta = dict()
     make_couple(arguments.cue_file, meta)
     cue, media = meta.get('cue'), meta.get('media')
     if not check_dep('ffmpeg'):
         raise OSError('ffmpeg is not installed')
-    if arguments.media_type == 'flac' or os.path.splitext(media)[1] == '.flac':
+    if arguments.media_type == 'flac':
         if not check_dep('flac'):
             raise OSError('flac is not installed')
-    if arguments.media_type == 'opus':
+    elif arguments.media_type == 'opus':
         if not check_dep('opusenc'):
             raise OSError('opus-tools is not installed')
+    elif arguments.media_type == 'vorbis':
+        if not check_dep('oggenc'):
+            raise OSError('vorbis-tools is not installed')
+    elif arguments.media_type == 'mp3':
+        if not check_dep('lame'):
+            raise OSError('lame is not installed')
     extract_metadata(cue, meta)
     check_cue(meta)
     check_couple(meta)
     get_points(meta, arguments.gaps)
     for each in meta['tracks']:
         convert(each, meta, arguments)
-#   pprint.pprint(meta)
