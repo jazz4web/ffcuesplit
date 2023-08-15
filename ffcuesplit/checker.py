@@ -1,3 +1,13 @@
+"""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+name: ffcuesplit
+description: a simple CDDA splitter
+license: GNU GPLv3
+author: Jazz
+contacts: webmaster@codej.ru
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""
+
 import re
 import shlex
 
@@ -26,8 +36,10 @@ def check_cue(cue):
         if track['num'] != '01' and track['index1'] is None:
             raise ValueError(f'bad index for track {num}')
     slash = '/' if cue.get('comment') and cue.get('disc ID') else ''
-    cue['commentary'] = f'{cue.get("comment")}{slash}{cue.get("disc ID")}'
-
+    cue['commentary'] = '{0}{1}{2}'.format(
+        cue.get('comment') or '',
+        slash,
+        cue.get('disc ID') or '')
 
 def cue_to_seconds(s):
     mm, ss, ff = re.split(r'[:.]', s)

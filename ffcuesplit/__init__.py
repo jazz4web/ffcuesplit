@@ -1,1 +1,1 @@
-version = '0.1.alpha'
+version = 'ffcuesplit v0.1.1'

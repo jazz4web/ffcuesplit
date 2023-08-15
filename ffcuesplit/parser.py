@@ -1,3 +1,13 @@
+"""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+name: ffcuesplit
+description: a simple CDDA splitter
+license: GNU GPLv3
+author: Jazz
+contacts: webmaster@codej.ru
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""
+
 import importlib.util
 import os
 import re

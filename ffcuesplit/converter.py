@@ -1,12 +1,23 @@
+"""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+name: ffcuesplit
+description: a simple CDDA splitter
+license: GNU GPLv3
+author: Jazz
+contacts: webmaster@codej.ru
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""
+
 import re
 import shlex
 
 from subprocess import Popen, PIPE
+from . import version
 
 
 def get_lame(cue, track, opts, filename):
-    cmd = 'lame{0}{1}{2}{3}{4}{5}{6}{7}{8} - "{9}"'.format(
-        opts or ' -V 0 --lowpass -1 --noreplaygain',
+    return 'lame {0}{1}{2}{3}{4}{5}{6}{7}{8} - "{9}"'.format(
+        opts or '-V 0 --lowpass -1 --noreplaygain',
         ' -r -s 44.1 --quiet --id3v2-only --id3v2-utf16',
         f' --ta \"{track["performer"]}\"',
         f' --tl \"{cue["album"]}\"',
@@ -14,28 +25,26 @@ def get_lame(cue, track, opts, filename):
         f' --tt \"{track["title"]}\"',
         f' --tn \"{track["num"]}\"',
         f' --ty \"{cue["date"]}\"',
-        f' --tv \"COMM=={cue["commentary"]}\"',
-        filename)
-    return cmd
+        f' --tv \"COMM=={cue["commentary"] or version}\"',
+        filename).replace('  ', ' ')
 
 
 def get_vorbis(cue, track, opts, filename):
-    cmd = 'oggenc{0}{1}{2}{3}{4}{5}{6}{7}{8} -o \"{9}\" -'.format(
-        opts or ' -q 4',
+    return 'oggenc {0}{1}{2}{3}{4}{5}{6}{7}{8} -o \"{9}\" -'.format(
+        opts or '-q 4',
         f' --artist \"{track["performer"]}\"',
         f' --album \"{cue["album"]}\"',
         f' --genre \"{cue["genre"]}\"',
         f' --title \"{track["title"]}\"',
         f' --comment tracknumber=\"{track["num"]}\"',
         f' --date \"{cue["date"]}\"',
-        f' --comment comment=\"{cue["commentary"]}\"',
+        f' --comment comment=\"{cue["commentary"] or version}\"',
         ' --quiet --raw --raw-rate 44100 --ignorelength',
-        filename)
-    return cmd
+        filename).replace('  ', ' ')
 
 
 def get_opus(cue, track, opts, filename):
-    cmd = 'opusenc{0}{1}{2}{3}{4}{5}{6}{7}{8} - \"{9}\"'.format(
+    return 'opusenc {0}{1}{2}{3}{4}{5}{6}{7}{8} - \"{9}\"'.format(
         opts or '',
         f' --artist \"{track["performer"]}\"',
         f' --album \"{cue["album"]}\"',
@@ -43,10 +52,9 @@ def get_opus(cue, track, opts, filename):
         f' --title \"{track["title"]}\"',
         f' --comment tracknumber=\"{track["num"]}\"',
         f' --date \"{cue["date"]}\"',
-        f' --comment comment=\"{cue["commentary"]}\"',
+        f' --comment comment=\"{cue["commentary"] or version}\"',
         ' --quiet --raw --raw-rate 44100 --ignorelength',
-        filename)
-    return cmd
+        filename).replace('  ', ' ')
 
 
 def get_flac(cue, track, opts, filename):
@@ -62,7 +70,7 @@ def get_flac(cue, track, opts, filename):
         f' --tag=title=\"{track["title"]}\"',
         f' --tag=tracknumber=\"{track["num"]}\"',
         f' --tag=date=\"{cue["date"]}\"',
-        f' --tag=comment=\"{cue["commentary"]}\"')
+        f' --tag=comment=\"{cue["commentary"] or version}\"')
     return cmd
 
 
@@ -91,8 +99,6 @@ def convert(track, cue, arguments):
         part = get_vorbis(cue, track, arguments.enc_opts, name)
     elif arguments.media_type == 'mp3':
         part = get_lame(cue, track, arguments.enc_opts, name)
-#   cmd = f'{ffmpeg} | {part}'
-#   print(cmd)
     with Popen(shlex.split(ffmpeg), stdout=PIPE) as f, \
             Popen(shlex.split(part), stderr=PIPE, stdin=f.stdout) as enc:
         enc.communicate()
