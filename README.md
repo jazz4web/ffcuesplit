@@ -19,10 +19,13 @@ Or
 ffcuesplit sample.flac
 ```
 
-More information is available with the key --help.
+More information is available on my [web-site](https://codej.ru/FxpZkvMk) or
+with the key --help in terminal.
 
 ```
 ffcuesplit --help
 ```
 
-This code is free, you can use ffcuesplit in accordance with GNU GPLv3.
+This code is free, you can use ffcuesplit in accordance with GNU GPLv3. Be
+aware, some [donation](https://yoomoney.ru/to/410015590807463) would be
+excellent.

@@ -37,9 +37,7 @@ def check_cue(cue):
             raise ValueError(f'bad index for track {num}')
     slash = '/' if cue.get('comment') and cue.get('disc ID') else ''
     cue['commentary'] = '{0}{1}{2}'.format(
-        cue.get('comment') or '',
-        slash,
-        cue.get('disc ID') or '')
+        cue.get('comment') or '', slash, cue.get('disc ID') or '')
 
 def cue_to_seconds(s):
     mm, ss, ff = re.split(r'[:.]', s)
