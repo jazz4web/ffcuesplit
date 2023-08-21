@@ -9,7 +9,6 @@ contacts: webmaster@codej.ru
 """
 
 import argparse
-import pprint
 import os
 import sys
 
