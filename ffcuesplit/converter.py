@@ -43,6 +43,21 @@ def get_vorbis(cue, track, opts, filename):
         filename).replace('  ', ' ')
 
 
+def get_faac(cue, track, opts, filename):
+    num = f'{track["num"]}/{len(cue["tracks"])}'
+    return 'faac {0}{1}{2}{3}{4}{5}{6}{7}{8} -o \"{9}\" -'.format(
+        opts or '',
+        f' --artist \"{track["performer"]}\"',
+        f' --album \"{cue["album"]}\"',
+        f' --genre \"{cue["genre"]}\"',
+        f' --title \"{track["title"]}\"',
+        f' --track \"{num}\"',
+        f' --year \"{cue["date"]}\"',
+        f' --comment \"{cue["commentary"] or version}\"',
+        ' -v 0 -X -P -w --overwrite',
+        filename).replace('  ', ' ')
+
+
 def get_opus(cue, track, opts, filename):
     return 'opusenc {0}{1}{2}{3}{4}{5}{6}{7}{8} - \"{9}\"'.format(
         opts or '',
@@ -75,7 +90,11 @@ def get_flac(cue, track, opts, filename):
 
 
 def convert(track, cue, arguments):
-    ext = {'flac': '.flac', 'mp3': '.mp3', 'vorbis': '.ogg', 'opus': '.opus'}
+    ext = {'flac': '.flac',
+           'mp3': '.mp3',
+           'vorbis': '.ogg',
+           'aac': '.m4a',
+           'opus': '.opus'}
     f = ext[arguments.media_type]
     if arguments.rename:
         title = re.sub(r'[\\/|?<>*:]', '~', track['title'])
@@ -99,6 +118,8 @@ def convert(track, cue, arguments):
         part = get_vorbis(cue, track, arguments.enc_opts, name)
     elif arguments.media_type == 'mp3':
         part = get_lame(cue, track, arguments.enc_opts, name)
+    elif arguments.media_type == 'aac':
+        part = get_faac(cue, track, arguments.enc_opts, name)
     with Popen(shlex.split(ffmpeg), stdout=PIPE) as f, \
             Popen(shlex.split(part), stderr=PIPE, stdin=f.stdout) as enc:
         enc.communicate()

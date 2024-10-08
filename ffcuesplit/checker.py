@@ -41,7 +41,6 @@ def check_cue(cue):
 
 def cue_to_seconds(s):
     mm, ss, ff = re.split(r'[:.]', s)
-    nn = int(ff) / 75
     return int(mm) * 60 + int(ss) + int(ff) / 75
 
 

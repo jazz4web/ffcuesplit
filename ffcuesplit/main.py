@@ -34,7 +34,7 @@ def parse_args(version):
         action='store',
         dest='media_type',
         default='flac',
-        choices=('flac', 'opus', 'vorbis', 'mp3'),
+        choices=('flac', 'opus', 'vorbis', 'mp3', 'aac'),
         help='the output media type, default is flac')
     args.add_argument(
         '-o',
@@ -86,6 +86,9 @@ def start_the_process(arguments):
     elif arguments.media_type == 'mp3':
         if not check_dep('lame'):
             raise OSError('lame is not installed')
+    elif arguments.media_type == 'aac':
+        if not check_dep('faac'):
+            raise OSError('faac is not installed')
     extract_metadata(cue, meta)
     check_cue(meta)
     check_couple(meta)
