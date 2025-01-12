@@ -19,7 +19,7 @@ Or
 ffcuesplit sample.flac
 ```
 
-More information is available on my [web-site](https://codej.ru/FxpZkvMk) or
+More information is available on my [web-site](https://avm4.ru/xixiLkLT) or
 with the key --help in terminal.
 
 ```
